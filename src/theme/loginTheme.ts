@@ -4,6 +4,10 @@ export const loginStyles = StyleSheet.create({
   keyboardAvoidingContainer: {
     flex: 1,
   },
+  keyboardAvoidingContainerRegister: {
+    flex: 1,
+    backgroundColor: '#5856D6',
+  },
   formContainer: {
     flex: 1,
     paddingHorizontal: 30,
@@ -48,5 +52,15 @@ export const loginStyles = StyleSheet.create({
   newUserContainer: {
     alignItems: 'flex-end',
     marginTop: 18,
+  },
+  buttonReturn: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    borderWidth: 1,
+    borderColor: 'white',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 100,
   },
 });
