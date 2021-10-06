@@ -1,6 +1,9 @@
 import {StyleSheet} from 'react-native';
 
 export const loginStyles = StyleSheet.create({
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
   formContainer: {
     flex: 1,
     paddingHorizontal: 30,
