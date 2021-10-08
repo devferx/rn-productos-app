@@ -38,17 +38,25 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
   }, []);
 
   const checkToken = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      // Token no autenticado
-      if (!token) {
-        return dispatch({type: 'notAuthenticated'});
-      }
-      // Hay token
-      console.log(token);
-    } catch (error) {
-      console.log({error});
+    const token = await AsyncStorage.getItem('token');
+    // Token no autenticado
+    if (!token) {
+      return dispatch({type: 'notAuthenticated'});
     }
+    // Hay token
+    const resp = await cafeApi.get<LoginResponse>('/auth');
+
+    if (resp.status !== 200) {
+      return dispatch({type: 'notAuthenticated'});
+    }
+
+    dispatch({
+      type: 'signUp',
+      payload: {
+        token: resp.data.token,
+        user: resp.data.usuario,
+      },
+    });
   };
 
   const signIn = async ({correo, password}: LoginData) => {
@@ -69,7 +77,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         },
       });
 
-      await AsyncStorage.setItem('token', JSON.stringify(data.token));
+      await AsyncStorage.setItem('token', data.token);
     } catch (error: any) {
       console.log(error.response.data.msg);
       dispatch({
