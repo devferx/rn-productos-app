@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -14,10 +14,12 @@ import {loginStyles} from '../theme/loginTheme';
 
 import {WhiteLogo} from '../components/WhiteLogo';
 import {useForm} from '../hooks/useForm';
+import {AuthContext} from '../context/AuthContext';
 
 interface Props extends StackScreenProps<any, any> {}
 
 export const RegisterScreen = ({navigation}: Props) => {
+  const {signUp} = useContext(AuthContext);
   const {email, password, name, onChange} = useForm({
     name: '',
     email: '',
@@ -25,7 +27,7 @@ export const RegisterScreen = ({navigation}: Props) => {
   });
 
   const onRegister = () => {
-    console.log({email, password, name});
+    signUp({correo: email, password, nombre: name});
     Keyboard.dismiss();
   };
 
@@ -40,7 +42,7 @@ export const RegisterScreen = ({navigation}: Props) => {
           <WhiteLogo />
 
           <Text style={loginStyles.title}>Registro</Text>
-          <Text style={loginStyles.label}>Email:</Text>
+          <Text style={loginStyles.label}>Nombre:</Text>
           <TextInput
             placeholder="Ingrese su nombre:"
             placeholderTextColor="rgba(255,255, 255, 0.4)"
