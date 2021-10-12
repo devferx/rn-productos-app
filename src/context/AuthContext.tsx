@@ -80,7 +80,6 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
       await AsyncStorage.setItem('token', data.token);
     } catch (error: any) {
-      console.log(error.response.data.msg);
       dispatch({
         type: 'addError',
         payload: error.response.data.msg || 'Información incorrecta',
@@ -88,7 +87,12 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
   const signUp = () => {};
-  const logOut = () => {};
+  const logOut = () => {
+    AsyncStorage.removeItem('token').then(() => {
+      dispatch({type: 'logout'});
+    });
+  };
+
   const removeError = () => dispatch({type: 'removeError'});
 
   return (
