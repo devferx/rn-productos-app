@@ -21,7 +21,8 @@ interface Props
 
 export const ProductScreen = ({navigation, route}: Props) => {
   const {id = '', name = ''} = route.params;
-  const {loadProductById} = useContext(ProductsContext);
+  const {loadProductById, addProduct, updateProduct} =
+    useContext(ProductsContext);
   const {categories, isLoading} = useCategories();
   const {_id, categoriaId, nombre, img, form, onChange, setFormValue} = useForm(
     {
@@ -34,9 +35,9 @@ export const ProductScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      title: name || 'Nuevo Producto',
+      title: nombre || 'Sin nombre del Producto',
     });
-  }, [name, navigation]);
+  }, [nombre, navigation]);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -55,6 +56,16 @@ export const ProductScreen = ({navigation, route}: Props) => {
 
     loadProduct();
   }, [id]);
+
+  const saveOrUpdate = async () => {
+    if (id.length > 0) {
+      updateProduct(categoriaId, nombre, id);
+    } else {
+      const tempCategoriaId = categoriaId || categories[0]._id;
+      const newProduct = await addProduct(tempCategoriaId, nombre);
+      onChange(newProduct._id, '_id');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -79,12 +90,14 @@ export const ProductScreen = ({navigation, route}: Props) => {
             />
           ))}
         </Picker>
-        <Button title="Guardar" onPress={() => {}} color="#5856D6" />
-        <View style={styles.actions}>
-          <Button title="Cámara" onPress={() => {}} color="#5856D6" />
-          <View style={styles.spaceButtons} />
-          <Button title="Galería" onPress={() => {}} color="#5856D6" />
-        </View>
+        <Button title="Guardar" onPress={saveOrUpdate} color="#5856D6" />
+        {_id.length > 0 && (
+          <View style={styles.actions}>
+            <Button title="Cámara" onPress={() => {}} color="#5856D6" />
+            <View style={styles.spaceButtons} />
+            <Button title="Galería" onPress={() => {}} color="#5856D6" />
+          </View>
+        )}
         {img.length > 0 && <Image source={{uri: img}} style={styles.img} />}
       </ScrollView>
     </View>
