@@ -1,10 +1,27 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Text, View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+import {StackScreenProps} from '@react-navigation/stack';
 
 import {ProductsContext} from '../context/ProductsContext';
+import {ProductsStackParams} from '../navigator/ProductsNavigator';
 
-export const ProductsScreen = () => {
+interface Props
+  extends StackScreenProps<ProductsStackParams, 'ProductsScreen'> {}
+
+export const ProductsScreen = ({navigation}: Props) => {
   const {products} = useContext(ProductsContext);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('ProductScreen', {})}>
+          <Text>Agregar</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   // Pull to refresh
 
@@ -14,7 +31,13 @@ export const ProductsScreen = () => {
         data={products}
         keyExtractor={p => p._id}
         renderItem={({item}) => (
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('ProductScreen', {
+                id: item._id,
+                name: item.nombre,
+              })
+            }>
             <Text style={styles.productName}>{item.nombre}</Text>
           </TouchableOpacity>
         )}
@@ -37,5 +60,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderBottomWidth: 2,
     borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  addButton: {
+    marginRight: 12,
   },
 });
