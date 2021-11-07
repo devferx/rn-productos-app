@@ -74,7 +74,10 @@ export const ProductsProvider = ({children}: ProductsProvider) => {
     );
   };
 
-  const deleteProduct = async (id: string) => {};
+  const deleteProduct = async (id: string) => {
+    const resp = await cafeApi.delete<Producto>(`/productos/${id}`);
+    setProducts(products.filter(prod => prod._id !== resp.data._id));
+  };
 
   const loadProductById = async (id: string): Promise<Producto> => {
     const resp = await cafeApi.get<Producto>(`/productos/${id}`);
