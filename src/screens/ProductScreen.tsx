@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Button,
+  Image,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -30,7 +31,6 @@ export const ProductScreen = ({navigation, route}: Props) => {
       img: '',
     },
   );
-  const [selectedLanguage, setSelectedLanguage] = useState();
 
   useEffect(() => {
     navigation.setOptions({
@@ -68,8 +68,8 @@ export const ProductScreen = ({navigation, route}: Props) => {
         />
         <Text style={styles.label}>Categoría:</Text>
         <Picker
-          selectedValue={selectedLanguage}
-          onValueChange={itemValue => setSelectedLanguage(itemValue)}>
+          selectedValue={categoriaId}
+          onValueChange={itemValue => onChange(itemValue, 'categoriaId')}>
           {isLoading && <Picker.Item label="------" value="" />}
           {categories.map(category => (
             <Picker.Item
@@ -85,7 +85,7 @@ export const ProductScreen = ({navigation, route}: Props) => {
           <View style={styles.spaceButtons} />
           <Button title="Galería" onPress={() => {}} color="#5856D6" />
         </View>
-        <Text>{JSON.stringify(form, null, 2)}</Text>
+        {img.length > 0 && <Image source={{uri: img}} style={styles.img} />}
       </ScrollView>
     </View>
   );
@@ -118,5 +118,10 @@ const styles = StyleSheet.create({
   },
   spaceButtons: {
     width: 10,
+  },
+  img: {
+    width: '100%',
+    height: 300,
+    marginTop: 20,
   },
 });
