@@ -10,10 +10,7 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {StackScreenProps} from '@react-navigation/stack';
-import {
-  launchCamera,
-  // launchImageLibrary
-} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
 import {useCategories} from '../hooks/useCategories';
@@ -26,8 +23,13 @@ interface Props
 
 export const ProductScreen = ({navigation, route}: Props) => {
   const {id = '', name = ''} = route.params;
-  const {loadProductById, addProduct, updateProduct, deleteProduct} =
-    useContext(ProductsContext);
+  const {
+    loadProductById,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    uploadImage,
+  } = useContext(ProductsContext);
   const {user} = useContext(AuthContext);
   const [tempUri, setTempUri] = useState<string>();
 
@@ -94,7 +96,27 @@ export const ProductScreen = ({navigation, route}: Props) => {
           return;
         }
         setTempUri(image.uri);
-        console.log(image.uri);
+        uploadImage(image, _id);
+      },
+    );
+  };
+
+  const takePhotoFromGallery = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+      },
+      resp => {
+        if (resp.didCancel) {
+          return;
+        }
+        const [image] = resp.assets!;
+        if (!image?.uri) {
+          return;
+        }
+        setTempUri(image.uri);
+        uploadImage(image, _id);
       },
     );
   };
@@ -132,7 +154,11 @@ export const ProductScreen = ({navigation, route}: Props) => {
           <View style={styles.actions}>
             <Button title="Cámara" onPress={takePhoto} color="#5856D6" />
             <View style={styles.spaceButtons} />
-            <Button title="Galería" onPress={() => {}} color="#5856D6" />
+            <Button
+              title="Galería"
+              onPress={takePhotoFromGallery}
+              color="#5856D6"
+            />
           </View>
         )}
 

@@ -3,6 +3,7 @@ import {AxiosResponse} from 'axios';
 
 import {Producto, ProductsResponse} from '../interfaces/appInterfaces';
 import cafeApi from '../api/cafeApi';
+import {Asset} from 'react-native-image-picker';
 
 type ProductsContextProps = {
   products: Producto[];
@@ -15,7 +16,7 @@ type ProductsContextProps = {
   ) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   loadProductById: (id: string) => Promise<Producto>;
-  uploadImage: (data: any, id: string) => Promise<void>; //TODO: Cambiar ANY
+  uploadImage: (data: Asset, id: string) => Promise<void>; //TODO: Cambiar ANY
 };
 
 export const ProductsContext = createContext({} as ProductsContextProps);
@@ -84,7 +85,21 @@ export const ProductsProvider = ({children}: ProductsProvider) => {
     return resp.data;
   };
 
-  const uploadImage = async (data: any, id: string) => {};
+  const uploadImage = async (data: Asset, id: string) => {
+    const fileToUpload = {
+      uri: data.uri,
+      type: data.type,
+      name: data.fileName,
+    };
+
+    const formData = new FormData();
+    formData.append('archivo', fileToUpload);
+    try {
+      await cafeApi.put(`/uploads/productos/${id}`, formData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <ProductsContext.Provider
