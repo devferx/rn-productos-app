@@ -25,7 +25,7 @@ export const ProductsScreen = ({navigation}: Props) => {
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('ProductScreen', {})}>
-          <Text>Agregar</Text>
+          <Text style={styles.addButtonText}>Agregar</Text>
         </TouchableOpacity>
       ),
     });
@@ -82,5 +82,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginRight: 12,
+  },
+  addButtonText: {
+    color: 'black',
   },
 });

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,10 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {StackScreenProps} from '@react-navigation/stack';
+import {
+  launchCamera,
+  // launchImageLibrary
+} from 'react-native-image-picker';
 
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
 import {useCategories} from '../hooks/useCategories';
@@ -25,6 +29,7 @@ export const ProductScreen = ({navigation, route}: Props) => {
   const {loadProductById, addProduct, updateProduct, deleteProduct} =
     useContext(ProductsContext);
   const {user} = useContext(AuthContext);
+  const [tempUri, setTempUri] = useState<string>();
 
   const {categories, isLoading} = useCategories();
   const {_id, categoriaId, nombre, img, onChange, setFormValue} = useForm({
@@ -74,6 +79,26 @@ export const ProductScreen = ({navigation, route}: Props) => {
     navigation.navigate('ProductsScreen');
   };
 
+  const takePhoto = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        quality: 0.5,
+      },
+      resp => {
+        if (resp.didCancel) {
+          return;
+        }
+        const [image] = resp.assets!;
+        if (!image?.uri) {
+          return;
+        }
+        setTempUri(image.uri);
+        console.log(image.uri);
+      },
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -105,12 +130,17 @@ export const ProductScreen = ({navigation, route}: Props) => {
         )}
         {_id.length > 0 && (
           <View style={styles.actions}>
-            <Button title="Cámara" onPress={() => {}} color="#5856D6" />
+            <Button title="Cámara" onPress={takePhoto} color="#5856D6" />
             <View style={styles.spaceButtons} />
             <Button title="Galería" onPress={() => {}} color="#5856D6" />
           </View>
         )}
-        {img.length > 0 && <Image source={{uri: img}} style={styles.img} />}
+
+        {tempUri ? (
+          <Image source={{uri: tempUri}} style={styles.img} />
+        ) : (
+          img.length > 0 && <Image source={{uri: img}} style={styles.img} />
+        )}
       </ScrollView>
     </View>
   );
